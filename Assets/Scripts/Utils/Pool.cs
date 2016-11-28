@@ -6,6 +6,8 @@ namespace Stairs.Utils
 {
     public sealed class Pool : Singleton<Pool>
     {
+        public Dictionary<GameObject, Step> GoToStepDictionary = new Dictionary<GameObject, Step>();
+
         private readonly Dictionary<string, Queue<GameObject>> _pools = new Dictionary<string, Queue<GameObject>>();
         private readonly Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
 

@@ -14,15 +14,17 @@ namespace Stairs
         {
             public Vector3 position;
             public WaypointType type;
+            public Step step;
 
-            public Waypoint(Vector3 position, WaypointType type = WaypointType.Step)
+            public Waypoint(Vector3 position, Step step = null, WaypointType type = WaypointType.Step)
             {
                 this.position = position;
                 this.type = type;
+                this.step = step;
             }
         }
 
-        [SerializeField] private float TimePerStep = 4.20f;
+        [SerializeField, Range(0.01f, 5.0f)] private float TimePerStep = 4.20f;
         
         private readonly Queue<Waypoint> _playerPath = new Queue<Waypoint>();
         private bool _takingStep = false;
@@ -34,15 +36,15 @@ namespace Stairs
 
         private void Update()
         {
-            if (!_takingStep) StartCoroutine(WalkToWaypoint(_playerPath.Dequeue().position, TimePerStep));
+            if (!_takingStep && _playerPath.Count > 0) StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), TimePerStep));
         }
 
-        public void AddStep(Vector3 destination)
+        public void AddStep(Vector3 destination, Step step = null)
         {
-            _playerPath.Enqueue(new Waypoint(destination));
+            _playerPath.Enqueue(new Waypoint(destination, step));
         }
 
-        private IEnumerator WalkToWaypoint(Vector3 wayPoint, float duration)
+        private IEnumerator WalkToWaypoint(Waypoint wayPoint, float duration)
         {
             _takingStep = true;
             var start = transform.position;
@@ -53,11 +55,12 @@ namespace Stairs
                 timer += Time.deltaTime;
                 var ratio = Mathf.Min(1f, timer/duration);
 
-                transform.position = Vector3.Lerp(start, wayPoint, ratio);
+                transform.position = Vector3.Lerp(start, wayPoint.position, ratio);
                 yield return new WaitForEndOfFrame();
             }
 
             _takingStep = false;
+            if (wayPoint.step != null) wayPoint.step.SteppedOn();
         }
 
     }
