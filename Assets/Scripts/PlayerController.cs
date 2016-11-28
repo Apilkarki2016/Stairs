@@ -36,7 +36,10 @@ namespace Stairs
 
         private void Update()
         {
-            if (!_takingStep && _playerPath.Count > 0) StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), TimePerStep));
+            if (!_takingStep && _playerPath.Count > 0)
+            {
+                StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), TimePerStep));
+            }
         }
 
         public void AddStep(Vector3 destination, Step step = null)

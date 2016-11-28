@@ -7,6 +7,7 @@ namespace Stairs.Utils
     public sealed class Pool : Singleton<Pool>
     {
         public Dictionary<GameObject, Step> GoToStepDictionary = new Dictionary<GameObject, Step>();
+        public Stairs StairController = null;
 
         private readonly Dictionary<string, Queue<GameObject>> _pools = new Dictionary<string, Queue<GameObject>>();
         private readonly Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
@@ -87,6 +88,11 @@ namespace Stairs.Utils
                 var t = _prefabs.First();
                 DestroyPool(t.Value);
             }
+        }
+
+        public void Awake()
+        {
+            StairController = FindObjectOfType<Stairs>();
         }
     }
 }

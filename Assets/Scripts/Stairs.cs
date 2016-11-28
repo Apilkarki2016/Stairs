@@ -10,6 +10,8 @@ namespace Stairs
         [SerializeField] private GameObject StairPrefab;
         [SerializeField] private int NumberOfSteps = 50;
 
+        private Queue<GameObject> _stairs = new Queue<GameObject>();
+
         private Vector3 _stepSize = Vector3.zero;
         private Vector3 _nextStep = Vector3.zero;
 
@@ -17,34 +19,34 @@ namespace Stairs
 
         private void Awake()
         {
-            Pool.Instance.AddToPool(StairPrefab, 25, transform);
+            Pool.Instance.AddToPool(StairPrefab, NumberOfSteps, transform);
             _stepSize = StairPrefab.GetComponent<MeshRenderer>().bounds.size;
             _player = FindObjectOfType<PlayerController>();
 
             for (int i = 0; i < NumberOfSteps; i++)
             {
-                SetStep(i);
-            }            
+                SetStep();
+            }     
         }
 
-        private void SetStep(int number)
+        public void SetStep()
         {
             var go = Pool.Instance.GetObject(StairPrefab);
             go.transform.position = _nextStep;
+            go.transform.rotation = Quaternion.identity;
 
-            StartCoroutine(AddToPlayer(go));
+            _stairs.Enqueue(go);
 
             _nextStep += new Vector3(0, _stepSize.y, _stepSize.z);
         }
 
-        /// <summary>
-        /// Must wait until end of a frame to have Step::OnEnable run.
-        /// </summary>
-        /// <returns>Yields until next frame.</returns>
-        private IEnumerator AddToPlayer(GameObject go)
+        private void Update()
         {
-            yield return new WaitForEndOfFrame();
-            if (_player != null) _player.AddStep(_nextStep + new Vector3(0, _stepSize.y, 0), Pool.Instance.GoToStepDictionary[go]);
+            while (_stairs.Count > 0)
+            {
+                var go = _stairs.Dequeue();
+                _player.AddStep(go.transform.position, Pool.Instance.GoToStepDictionary[go]);
+            }
         }
     }
 }
