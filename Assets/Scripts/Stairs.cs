@@ -10,7 +10,7 @@ namespace Stairs
         [SerializeField] private GameObject StairPrefab;
         [SerializeField] private int NumberOfSteps = 50;
 
-        private Queue<GameObject> _stairs = new Queue<GameObject>();
+        private readonly Queue<GameObject> _stairs = new Queue<GameObject>();
 
         private Vector3 _stepSize = Vector3.zero;
         private Vector3 _nextStep = Vector3.zero;
@@ -23,7 +23,7 @@ namespace Stairs
             _stepSize = StairPrefab.GetComponent<MeshRenderer>().bounds.size;
             _player = FindObjectOfType<PlayerController>();
 
-            for (int i = 0; i < NumberOfSteps; i++)
+            for (var i = 0; i < NumberOfSteps; i++)
             {
                 SetStep();
             }     

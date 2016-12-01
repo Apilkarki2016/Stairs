@@ -35,5 +35,30 @@ namespace Stairs
             _deactivating = false;
             Pool.Instance.ReturnObject(ref _go);
         }
+
+        public void OnTouchBegin()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnTouchCancel()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnTouchEnd()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnTouchMove(Vector2 touchDeltaPosition, float touchDeltaTime)
+        {
+            gameObject.transform.Translate(new Vector3(touchDeltaPosition.x, 0, 0) * touchDeltaTime);
+        }
+
+        public void OnTouchStay()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
