@@ -50,7 +50,7 @@ namespace Stairs
         public void OnTouchMove(Touch touch)
         {
             var vec = new Vector3(touch.deltaPosition.x, 0, 0);
-            _go.transform.Translate(vec * touch.deltaTime);
+            _go.transform.Translate(vec * touch.deltaTime * CalculatePerspectiveToMovement());
         }
 
         public void OnTouchStay(Touch touch)
@@ -61,6 +61,14 @@ namespace Stairs
         public void OnTouchBegin(Touch touch)
         {
             
+        }
+
+        private float CalculatePerspectiveToMovement()
+        {
+            var vec = _go.transform.position;
+            vec.x = Camera.main.transform.position.x;
+            var dist = Vector3.Magnitude(Camera.main.transform.position - vec);
+            return (dist * Mathf.PI / 2) / -Mathf.Tan(Camera.main.fieldOfView / 2);
         }
     }
 }
