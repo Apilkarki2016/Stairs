@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Stairs.Utils;
+using System;
 
 namespace Stairs
 {
-    public class Step : MonoBehaviour
+    public class Step : MonoBehaviour, ITouchControllable
     {
         [SerializeField] private float DeactivationDelay = 2.1f;
         private bool _deactivating = false;
@@ -36,29 +37,30 @@ namespace Stairs
             Pool.Instance.ReturnObject(ref _go);
         }
 
-        public void OnTouchBegin()
+        public void OnTouchCancel(Touch touch)
         {
-            throw new System.NotImplementedException();
+            
         }
 
-        public void OnTouchCancel()
+        public void OnTouchEnd(Touch touch)
         {
-            throw new System.NotImplementedException();
+            
         }
 
-        public void OnTouchEnd()
+        public void OnTouchMove(Touch touch)
         {
-            throw new System.NotImplementedException();
+            var vec = new Vector3(touch.deltaPosition.x, 0, 0);
+            _go.transform.Translate(vec * touch.deltaTime);
         }
 
-        public void OnTouchMove(Vector2 touchDeltaPosition, float touchDeltaTime)
+        public void OnTouchStay(Touch touch)
         {
-            gameObject.transform.Translate(new Vector3(touchDeltaPosition.x, 0, 0) * touchDeltaTime);
+            
         }
 
-        public void OnTouchStay()
+        public void OnTouchBegin(Touch touch)
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }
