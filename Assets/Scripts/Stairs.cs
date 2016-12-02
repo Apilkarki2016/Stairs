@@ -45,7 +45,9 @@ namespace Stairs
             while (_stairs.Count > 0)
             {
                 var go = _stairs.Dequeue();
-                _player.AddStep(go.transform.position, Pool.Instance.GoToStepDictionary[go]);
+                var step = Pool.Instance.GoToStepDictionary[go] as Step;
+
+                if (step != null) _player.AddStep(go.transform.position, step);
             }
         }
     }
