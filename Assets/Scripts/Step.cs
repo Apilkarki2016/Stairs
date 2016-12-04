@@ -2,22 +2,65 @@
 using System.Collections;
 using Stairs.Utils;
 using System;
+using Random = UnityEngine.Random;
 
 namespace Stairs
 {
     public class Step : MonoBehaviour, ITouchControllable
     {
-        [SerializeField] private float DeactivationDelay = 2.1f;
+        [SerializeField] private float DeactivationDelay = 10.1f;
+        [SerializeField, Range(1f, 30f)] private float OffsetDistance = 3f;
+        [SerializeField, Range(0.1f, 5f)] private float SnapTolerance = 2f;
+
+        [SerializeField] private Color Stationary = Color.black;
+        [SerializeField] private Color Active = Color.yellow;
+
+
         private bool _deactivating = false;
 
         private GameObject _go = null;
         private Rigidbody _rb = null;
+        private Renderer _renderer;
+        private Vector3 _snapPosition;
+
+        public bool Interactable
+        {
+            get { return _interactable; }
+
+            set
+            {
+                _interactable = value;
+                _renderer.material.color = value ? Active : Stationary;
+            }
+        }
+        private bool _interactable;
 
         private void Awake()
         {
             Pool.Instance.GoToStepDictionary.Add(gameObject, this);
             _go = gameObject;
             _rb = GetComponent<Rigidbody>();
+            _renderer = GetComponent<Renderer>();
+        }
+
+        public void ActivateInScene(float chanceToOffset = 0.15f)
+        {
+            _snapPosition = transform.position;
+
+            if (Random.Range(0f, 1f) < chanceToOffset)
+            {
+                Interactable = true;
+                transform.position += Vector3.right * OffsetDistance * (Random.value < 0.5f ? 1 : -1);
+            }
+            else
+            {
+                Interactable = false;
+            }
+        }
+
+        private void ChangeColor(Color col)
+        {
+            _renderer.material.color = col;
         }
 
         public void SteppedOn()
@@ -49,13 +92,17 @@ namespace Stairs
 
         public void OnTouchMove(Touch touch)
         {
+            if (!Interactable) return;
+
             var vec = new Vector3(touch.deltaPosition.x, 0, 0);
             _go.transform.Translate(vec * touch.deltaTime * CalculatePerspectiveToMovement());
+
+            CheckForSnap();
         }
 
         public void OnTouchStay(Touch touch)
         {
-            
+
         }
 
         public void OnTouchBegin(Touch touch)
@@ -69,6 +116,16 @@ namespace Stairs
             vec.x = Camera.main.transform.position.x;
             var dist = Vector3.Magnitude(Camera.main.transform.position - vec);
             return (dist * Mathf.PI / 2) / -Mathf.Tan(Camera.main.fieldOfView / 2);
+        }
+
+        private void CheckForSnap()
+        {
+            var dist = Vector3.Magnitude(transform.position - _snapPosition);
+            if (dist < SnapTolerance)
+            {
+                Interactable = false;
+                transform.position = _snapPosition;
+            }
         }
     }
 }
