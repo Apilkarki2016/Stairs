@@ -12,6 +12,23 @@ namespace Stairs
 
         public const string StepTag = "Step";
 
+        /// <summary>
+        /// If the character is currently running his path.
+        /// </summary>
+        /// <remarks>
+        /// In c# bool is non-nullable type and has default value of false.
+        /// We must trust this because of several reasons that can't be helped:
+        /// 1. Unity forces us to use c# 4, autoproperty initializers are c# 6 feature.
+        /// 2. Unity gameObjects must inherit from MonoBehavior and custom constructor is
+        /// not supported.
+        /// 3. private void Awake() is called only at the first frame after this object is
+        /// loaded into a scene. We really don't want to trust it. In addition, if Awake()
+        /// is present compile time, it will generate overhead when unity accesses it with
+        /// a reflection
+        /// 4. tldr: Because Unity is shit.
+        /// </remarks>
+        public bool IsRunning { private set; get; }
+
         private enum WaypointType { Step = 0, Walk = 1 }
 
         private struct Waypoint
@@ -31,20 +48,6 @@ namespace Stairs
         [SerializeField, Range(0.01f, 5.0f)] private float TimePerStep = 4.20f;
         
         private readonly Queue<Waypoint> _playerPath = new Queue<Waypoint>();
-        private bool _takingStep = false;
-
-        private void Awake()
-        {
-           
-        }
-
-        private void Update()
-        {
-            if (!_takingStep && _playerPath.Count > 0)
-            {
-                StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), TimePerStep));
-            }
-        }
 
         public void AddStep(Vector3 destination, Step step = null)
         {
@@ -53,7 +56,6 @@ namespace Stairs
 
         private IEnumerator WalkToWaypoint(Waypoint wayPoint, float duration)
         {
-            _takingStep = true;
             var start = transform.position;
             var timer = 0f;
 
@@ -66,17 +68,35 @@ namespace Stairs
                 yield return new WaitForEndOfFrame();
             }
 
-            var ray = new Ray(transform.position, Vector3.down);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit) && !hit.collider.gameObject.CompareTag(StepTag))
+            if (wayPoint.step != null)
             {
-                Debug.Log(hit.collider.gameObject.tag);
-                PlayerDeathEvent.Invoke();
+                if (wayPoint.step.Interactable)
+                {
+                    OnMissedStep();
+                }
+
+                wayPoint.step.SteppedOn();
             }
 
-            _takingStep = false;
-            if (wayPoint.step != null) wayPoint.step.SteppedOn();
+            LookForNextStep();
         }
 
+        private void OnMissedStep()
+        {
+            Debug.Log("Player missed a setep and lost.");
+            PlayerDeathEvent.Invoke();
+        }
+
+        private void LookForNextStep()
+        {
+            if (_playerPath.Count > 0) StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), TimePerStep));
+        }
+
+        public void StartRunning()
+        {
+            if (IsRunning) return;
+            IsRunning = true;
+            LookForNextStep();
+        }
     }
 }
