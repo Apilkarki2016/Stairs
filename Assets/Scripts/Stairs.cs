@@ -55,5 +55,15 @@ namespace Stairs
                 step.ActivateInScene(SafeStepsAtStart >= ++_stepsPlaced, StepOffsetChange);
             }
         }
+
+        public void StopCoroutinesOnAllStairs()
+        {
+            var dictionary = Pool.Instance.GoToStepDictionary;
+            foreach (var kvp in dictionary)
+            {
+                var step = kvp.Value as Step;
+                if (step != null) step.StopAllCoroutines();
+            }
+        }
     }
 }

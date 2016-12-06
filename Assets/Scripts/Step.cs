@@ -36,10 +36,15 @@ namespace Stairs
 
         private void Awake()
         {
+            InitializeStep();
+        }
+
+        private void InitializeStep()
+        {
             Pool.Instance.GoToStepDictionary.Add(gameObject, this);
-            _go = gameObject;
-            _rb = GetComponent<Rigidbody>();
-            _renderer = GetComponent<Renderer>();
+            _go = _go ?? gameObject;
+            _rb = _rb ?? GetComponent<Rigidbody>();
+            _renderer = _renderer ?? GetComponent<Renderer>();
         }
 
         public void ActivateInScene(bool alwaysSafe, float chanceToOffset = 0.15f)

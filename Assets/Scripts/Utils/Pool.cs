@@ -92,6 +92,16 @@ namespace Stairs.Utils
 
         public void Awake()
         {
+            Initialization();
+        }
+
+        public void ReInitialize()
+        {
+            Initialization();
+        }
+
+        private void Initialization()
+        {
             StairController = FindObjectOfType<Stairs>();
         }
     }

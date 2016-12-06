@@ -20,22 +20,12 @@ namespace Stairs.Utils
         private static object _lock = new object();
 
         /// <summary>
-        /// Aplication quit flag.
-        /// </summary>
-        private static bool _quit = false;
-
-        /// <summary>
         /// Returns, and creates if needed, reference to the singleten object.
         /// </summary>
         public static T Instance
         {
             get
             {
-                if (_quit)
-                {
-                    return null;
-                }
-
                 lock (_lock)
                 {
                     if (_instance != null) return _instance;
@@ -47,7 +37,6 @@ namespace Stairs.Utils
                         var singleton = new GameObject();
                         _instance = singleton.AddComponent<T>();
                         singleton.name = "Singleton instance of " + typeof(T).ToString();
-                        DontDestroyOnLoad(singleton);
                     }
                     else
                     {
@@ -57,14 +46,6 @@ namespace Stairs.Utils
                     return _instance;
                 }
             }
-        }
-
-        /// <summary>
-        /// Sets "flag" to signal application is quitting.
-        /// </summary>
-        public void OnDestroy()
-        {
-            _quit = true;
         }
     }
 }

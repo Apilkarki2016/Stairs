@@ -9,6 +9,8 @@ namespace Stairs
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private UnityEvent PlayerDeathEvent;
+        [SerializeField] private UnityEvent PlayerStartsRunningEvent;
+        [SerializeField] private GameObject TouchControlBackdrop;
 
         public const string StepTag = "Step";
 
@@ -22,9 +24,7 @@ namespace Stairs
         /// 2. Unity gameObjects must inherit from MonoBehavior and custom constructor is
         /// not supported.
         /// 3. private void Awake() is called only at the first frame after this object is
-        /// loaded into a scene. We really don't want to trust it. In addition, if Awake()
-        /// is present compile time, it will generate overhead when unity accesses it with
-        /// a reflection
+        /// loaded into a scene. We really should not trust it.
         /// 4. tldr: Because Unity is shit.
         /// </remarks>
         public bool IsRunning { private set; get; }
@@ -48,6 +48,12 @@ namespace Stairs
         [SerializeField, Range(0.01f, 5.0f)] private float TimePerStep = 4.20f;
         
         private readonly Queue<Waypoint> _playerPath = new Queue<Waypoint>();
+        private Rigidbody _rigidBody;
+
+        private void Awake()
+        {
+            _rigidBody = GetComponent<Rigidbody>();
+        }
 
         public void AddStep(Vector3 destination, Step step = null)
         {
@@ -70,12 +76,12 @@ namespace Stairs
 
             if (wayPoint.step != null)
             {
+                wayPoint.step.SteppedOn();
                 if (wayPoint.step.Interactable)
                 {
                     OnMissedStep();
+                    yield break;
                 }
-
-                wayPoint.step.SteppedOn();
             }
 
             LookForNextStep();
@@ -83,7 +89,15 @@ namespace Stairs
 
         private void OnMissedStep()
         {
-            Debug.Log("Player missed a setep and lost.");
+            Debug.Log("Player missed a step and lost.");
+
+            // We must release the backdrop, as it's non-convex mesh and thus can't be
+            // made non-kinematic!
+            TouchControlBackdrop.transform.parent = null;
+
+            _rigidBody.isKinematic = false;
+            StopAllCoroutines();
+
             PlayerDeathEvent.Invoke();
         }
 
@@ -95,6 +109,8 @@ namespace Stairs
         public void StartRunning()
         {
             if (IsRunning) return;
+
+            PlayerStartsRunningEvent.Invoke();
             IsRunning = true;
             LookForNextStep();
         }
