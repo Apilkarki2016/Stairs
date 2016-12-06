@@ -10,6 +10,7 @@ namespace Stairs
     {
         [SerializeField] private UnityEvent PlayerDeathEvent;
         [SerializeField] private UnityEvent PlayerStartsRunningEvent;
+        [SerializeField] private UnityEvent PlayerTakesStep;
         [SerializeField] private GameObject TouchControlBackdrop;
 
         public const string StepTag = "Step";
@@ -77,6 +78,7 @@ namespace Stairs
             if (wayPoint.step != null)
             {
                 wayPoint.step.SteppedOn();
+                PlayerTakesStep.Invoke();
                 if (wayPoint.step.Interactable)
                 {
                     OnMissedStep();
