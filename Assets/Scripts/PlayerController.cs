@@ -46,10 +46,13 @@ namespace Stairs
             }
         }
 
-        [SerializeField, Range(0.01f, 5.0f)] private float TimePerStep = 4.20f;
-        
+        [SerializeField, Range(0.1f, 100.0f)] private float StepsPerSecond = 1.50f;
+        [SerializeField, Range(1, 100)] private int AccelerateAfterHowManySteps = 8;
+        [SerializeField, Range(0f, 500f)] private float Acceleration = 120f;
+
         private readonly Queue<Waypoint> _playerPath = new Queue<Waypoint>();
         private Rigidbody _rigidBody;
+        private int _stepsTaken = 0;
 
         private void Awake()
         {
@@ -105,7 +108,8 @@ namespace Stairs
 
         private void LookForNextStep()
         {
-            if (_playerPath.Count > 0) StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), TimePerStep));
+            if (++_stepsTaken%AccelerateAfterHowManySteps == 0) StepsPerSecond += Acceleration/1000f;
+            if (_playerPath.Count > 0) StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), 1/StepsPerSecond));
         }
 
         public void StartRunning()
