@@ -1,12 +1,17 @@
 ﻿using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 namespace Stairs
 {
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField] private UnityEvent PlayerDeathEvent;
+
+        public const string StepTag = "Step";
+
         private enum WaypointType { Step = 0, Walk = 1 }
 
         private struct Waypoint
@@ -59,6 +64,14 @@ namespace Stairs
 
                 transform.position = Vector3.Lerp(start, wayPoint.position, ratio);
                 yield return new WaitForEndOfFrame();
+            }
+
+            var ray = new Ray(transform.position, Vector3.down);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit) && !hit.collider.gameObject.CompareTag(StepTag))
+            {
+                Debug.Log(hit.collider.gameObject.tag);
+                PlayerDeathEvent.Invoke();
             }
 
             _takingStep = false;

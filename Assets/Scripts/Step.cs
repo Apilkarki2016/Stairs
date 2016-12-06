@@ -15,7 +15,6 @@ namespace Stairs
         [SerializeField] private Color Stationary = Color.black;
         [SerializeField] private Color Active = Color.yellow;
 
-
         private bool _deactivating = false;
 
         private GameObject _go = null;
@@ -43,11 +42,11 @@ namespace Stairs
             _renderer = GetComponent<Renderer>();
         }
 
-        public void ActivateInScene(float chanceToOffset = 0.15f)
+        public void ActivateInScene(bool alwaysSafe, float chanceToOffset = 0.15f)
         {
             _snapPosition = transform.position;
 
-            if (Random.Range(0f, 1f) < chanceToOffset)
+            if (Random.Range(0f, 1f) < chanceToOffset && !alwaysSafe)
             {
                 Interactable = true;
                 transform.position += Vector3.right * OffsetDistance * (Random.value < 0.5f ? 1 : -1);
