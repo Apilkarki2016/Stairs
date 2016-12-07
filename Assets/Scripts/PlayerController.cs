@@ -94,8 +94,6 @@ namespace Stairs
 
         private void OnMissedStep()
         {
-            Debug.Log("Player missed a step and lost.");
-
             // We must release the backdrop, as it's non-convex mesh and thus can't be
             // made non-kinematic!
             TouchControlBackdrop.transform.parent = null;

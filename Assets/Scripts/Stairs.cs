@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Stairs.Utils;
 using UnityEngine;
 using System.Collections;
+using Random = UnityEngine.Random;
 
 namespace Stairs
 {
@@ -11,6 +13,9 @@ namespace Stairs
         [SerializeField] private float StepOffsetChange = 0.22f;
         [SerializeField] private int NumberOfSteps = 50;
         [SerializeField] private int SafeStepsAtStart = 4;
+
+        [SerializeField] private GameObject CoinPrefab;
+        [SerializeField, Range(0f, 1f)] private float PickupRarity = 0.10f;
 
         private readonly Queue<GameObject> _stairs = new Queue<GameObject>();
 
@@ -23,6 +28,7 @@ namespace Stairs
         private void Awake()
         {
             Pool.Instance.AddToPool(StairPrefab, NumberOfSteps, transform);
+            Pool.Instance.AddToPool(CoinPrefab, (int) (NumberOfSteps*PickupRarity), transform);
             _stepSize = StairPrefab.GetComponent<MeshRenderer>().bounds.size;
             _player = FindObjectOfType<PlayerController>();
 
@@ -37,6 +43,12 @@ namespace Stairs
             var go = Pool.Instance.GetObject(StairPrefab);
             go.transform.position = _nextStep;
             go.transform.rotation = Quaternion.identity;
+
+            if (Random.Range(0f, 1f) < PickupRarity)
+            {
+                var pu = Pool.Instance.GetObject(CoinPrefab);
+                (Pool.Instance.GoToPickupDictionary[pu]).PositionInScene(go.transform.position);
+            }
 
             _stairs.Enqueue(go);
 

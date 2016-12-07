@@ -9,14 +9,13 @@ namespace Stairs.Utils
     public class SceneController : MonoBehaviour
     {
         [SerializeField] private Text ScoreText;
-        [SerializeField] private string ScoreTextPatter = "{0} Steps!";
-
-        private int _playerScore = 0;
+        [SerializeField] private string ScoreTextPattern = "{0} Steps";
+        [SerializeField] private Text CoinText;
+        [SerializeField] private string CoinPattern = "Coins {0}";
 
         public void IncreasePlayerScore()
         {
-            _playerScore++;
-            ScoreText.text = string.Format(ScoreTextPatter, _playerScore);
+            ScoreText.text = string.Format(ScoreTextPattern, DataStorage.Instance.AddToSteps(1));
         }
 
         public void ReloadScene()
@@ -24,6 +23,12 @@ namespace Stairs.Utils
             SceneManager.LoadScene(0);
             Pool.Instance.DestroyAllPools();
             Pool.Instance.ReInitialize();
+            DataStorage.Instance.InitializeForPlayloop();
+        }
+
+        public void CollectCoin()
+        {
+            CoinText.text = string.Format(CoinPattern, DataStorage.Instance.AddToCoins(1));
         }
     }
 }

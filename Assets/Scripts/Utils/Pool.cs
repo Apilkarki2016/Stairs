@@ -7,7 +7,10 @@ namespace Stairs.Utils
     public sealed class Pool : Singleton<Pool>
     {
         public Dictionary<GameObject, ITouchControllable> GoToStepDictionary = new Dictionary<GameObject, ITouchControllable>();
+        public Dictionary<GameObject, PickupObject> GoToPickupDictionary = new Dictionary<GameObject, PickupObject>();
+
         public Stairs StairController = null;
+        public SceneController SceneControl = null;
 
         private readonly Dictionary<string, Queue<GameObject>> _pools = new Dictionary<string, Queue<GameObject>>();
         private readonly Dictionary<string, GameObject> _prefabs = new Dictionary<string, GameObject>();
@@ -103,6 +106,7 @@ namespace Stairs.Utils
         private void Initialization()
         {
             StairController = FindObjectOfType<Stairs>();
+            SceneControl = FindObjectOfType<SceneController>();
         }
     }
 }
