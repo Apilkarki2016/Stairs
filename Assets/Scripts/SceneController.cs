@@ -20,6 +20,7 @@ namespace Stairs.Utils
 
         public void ReloadScene()
         {
+            DataStorage.Instance.EndOfPlayLoop();
             SceneManager.LoadScene(0);
             Pool.Instance.DestroyAllPools();
             Pool.Instance.ReInitialize();

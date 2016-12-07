@@ -34,7 +34,7 @@ namespace Stairs.Utils
                 if (_parent != null) go.transform.parent = _parent;
                 if (go != null) ReturnObject(ref go);
             }
-
+            
             return true;
         }
 
