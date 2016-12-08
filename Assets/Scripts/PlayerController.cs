@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using Stairs.Utils;
 using UnityEngine.Events;
 
 namespace Stairs
@@ -11,6 +12,7 @@ namespace Stairs
         [SerializeField] private UnityEvent PlayerDeathEvent;
         [SerializeField] private UnityEvent PlayerStartsRunningEvent;
         [SerializeField] private UnityEvent PlayerTakesStep;
+        [SerializeField] private UnityEvent PlayerNeedsSave;
         [SerializeField] private GameObject TouchControlBackdrop;
 
         public const string StepTag = "Step";
@@ -51,8 +53,11 @@ namespace Stairs
         [SerializeField, Range(0f, 500f)] private float Acceleration = 120f;
 
         private readonly Queue<Waypoint> _playerPath = new Queue<Waypoint>();
+        private readonly Queue<Waypoint> _playerTrail = new Queue<Waypoint>();
         private Rigidbody _rigidBody;
         private int _stepsTaken = 0;
+
+        public static bool DieOnMiss = true;
 
         private void Awake()
         {
@@ -80,12 +85,25 @@ namespace Stairs
 
             if (wayPoint.step != null)
             {
-                wayPoint.step.SteppedOn();
+                _playerTrail.Enqueue(wayPoint);
                 PlayerTakesStep.Invoke();
+
                 if (wayPoint.step.Interactable)
                 {
-                    OnMissedStep();
-                    yield break;
+                    DieOnMiss = true;
+                    Pool.Instance.SceneControl.SaveDialogOpen = true;
+                    PlayerNeedsSave.Invoke();
+                    yield return new WaitWhile(() => Pool.Instance.SceneControl.SaveDialogOpen);
+                     
+                    if (DieOnMiss)
+                    {
+                        OnMissedStep();
+                        yield break;
+                    }
+                    else
+                    {
+                        wayPoint.step.AutoSnap();
+                    }
                 }
             }
 
@@ -106,6 +124,11 @@ namespace Stairs
 
         private void LookForNextStep()
         {
+            while (_playerTrail.Count > Pool.Instance.StairController.PlayerTrailLenght)
+            {
+                _playerTrail.Dequeue().step.SteppedOn();
+            }
+
             if (++_stepsTaken%AccelerateAfterHowManySteps == 0) StepsPerSecond += Acceleration/1000f;
             if (_playerPath.Count > 0) StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), 1/StepsPerSecond));
         }

@@ -15,8 +15,6 @@ namespace Stairs
         [SerializeField] private Color Stationary = Color.black;
         [SerializeField] private Color Active = Color.yellow;
 
-        private bool _deactivating = false;
-
         private GameObject _go = null;
         private Rigidbody _rb = null;
         private Renderer _renderer;
@@ -37,6 +35,12 @@ namespace Stairs
         private void Awake()
         {
             InitializeStep();
+        }
+
+        public void AutoSnap()
+        {
+            transform.position = _snapPosition;
+            CheckForSnap();
         }
 
         private void InitializeStep()
@@ -69,18 +73,7 @@ namespace Stairs
 
         public void SteppedOn()
         {
-            if (_deactivating) return;
-            _deactivating = true;
             Pool.Instance.StairController.SetStep();
-
-            StartCoroutine(ReturnToPool(DeactivationDelay));
-        }
-
-        private IEnumerator ReturnToPool(float duration)
-        {
-            yield return new WaitForSeconds(duration);
-
-            _deactivating = false;
             Pool.Instance.ReturnObject(ref _go);
         }
 
@@ -96,7 +89,7 @@ namespace Stairs
 
         public void OnTouchMove(Touch touch)
         {
-            if (!Interactable) return;
+            if (!Interactable || Pool.Instance.SceneControl.SaveDialogOpen) return;
 
             var vec = new Vector3(touch.deltaPosition.x, 0, 0);
             _go.transform.Translate(vec * touch.deltaTime * CalculatePerspectiveToMovement());

@@ -8,6 +8,8 @@ namespace Stairs.Utils
 {
     public partial class DataStorage : Singleton<DataStorage>
     {
+        public int Coins { get { return PersistentData.PermanentCoins; } }
+        public int Gems { get { return PersistentData.PermanentGems; } }
         public int StepsCurrent;
         public int HighScore { get { return PersistentData.HighScore; } }
 

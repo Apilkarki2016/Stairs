@@ -8,14 +8,22 @@ namespace Stairs.Utils
 {
     public class SceneController : MonoBehaviour
     {
+        public bool SaveDialogOpen = true;
+
         [SerializeField] private Text ScoreText;
         [SerializeField] private string ScoreTextPattern = "{0} Steps";
         [SerializeField] private Text CoinText;
         [SerializeField] private string CoinPattern = "Coins {0}";
 
+        private void Update()
+        {
+            ScoreText.text = string.Format(ScoreTextPattern, DataStorage.Instance.StepsCurrent);
+            CoinText.text = string.Format(CoinPattern, DataStorage.Instance.Coins);
+        }
+
         public void IncreasePlayerScore()
         {
-            ScoreText.text = string.Format(ScoreTextPattern, DataStorage.Instance.AddToSteps(1));
+            DataStorage.Instance.AddToSteps(1);
         }
 
         public void ReloadScene()
@@ -29,7 +37,7 @@ namespace Stairs.Utils
 
         public void CollectCoin()
         {
-            CoinText.text = string.Format(CoinPattern, DataStorage.Instance.AddToCoins(1));
+            DataStorage.Instance.AddToCoins(1);
         }
     }
 }

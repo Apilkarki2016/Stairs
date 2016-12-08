@@ -13,6 +13,7 @@ namespace Stairs
         [SerializeField] private float StepOffsetChange = 0.22f;
         [SerializeField] private int NumberOfSteps = 50;
         [SerializeField] private int SafeStepsAtStart = 4;
+        [SerializeField] public int PlayerTrailLenght = 6;
 
         [SerializeField] private GameObject CoinPrefab;
         [SerializeField, Range(0f, 1f)] private float PickupRarity = 0.10f;
