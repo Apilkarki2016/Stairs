@@ -91,7 +91,13 @@ namespace Stairs
         {
             if (!Interactable || Pool.Instance.SceneControl.SaveDialogOpen) return;
 
-            var vec = new Vector3(touch.deltaPosition.x, 0, 0);
+            var howMuch = touch.deltaPosition.x;
+            if (Mathf.Abs(howMuch) > OffsetDistance)
+            {
+                howMuch = (howMuch/Mathf.Abs(howMuch)) * OffsetDistance;
+            }
+
+            var vec = new Vector3(howMuch, 0, 0);
             _go.transform.Translate(vec * touch.deltaTime * CalculatePerspectiveToMovement());
 
             CheckForSnap();
