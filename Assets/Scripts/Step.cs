@@ -51,7 +51,7 @@ namespace Stairs
             _renderer = _renderer ?? GetComponent<Renderer>();
         }
 
-        public void ActivateInScene(bool alwaysSafe, float chanceToOffset = 0.15f)
+        public bool ActivateInScene(bool alwaysSafe, float chanceToOffset = 0.15f)
         {
             _snapPosition = transform.position;
 
@@ -59,10 +59,12 @@ namespace Stairs
             {
                 Interactable = true;
                 transform.position += Vector3.right * OffsetDistance * (Random.value < 0.5f ? 1 : -1);
+                return true;
             }
             else
             {
                 Interactable = false;
+                return false;
             }
         }
 
