@@ -56,12 +56,14 @@ namespace Stairs
         private readonly Queue<Waypoint> _playerTrail = new Queue<Waypoint>();
         private Rigidbody _rigidBody;
         private int _stepsTaken = 0;
+        private AudioSource _stepSource;
 
         public static bool DieOnMiss = true;
 
         private void Awake()
         {
             _rigidBody = GetComponent<Rigidbody>();
+            _stepSource = GetComponent<AudioSource>();
         }
 
         public void AddStep(Vector3 destination, Step step = null)
@@ -105,6 +107,8 @@ namespace Stairs
                         wayPoint.step.AutoSnap();
                     }
                 }
+
+                _stepSource.PlayOneShot(_stepSource.clip);
             }
 
             LookForNextStep();
