@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Stairs.Utils;
 using UnityEngine;
+using UnityEngine.Advertisements;
 using UnityEngine.UI;
 
 namespace Stairs.GUI
@@ -31,6 +32,24 @@ namespace Stairs.GUI
         {
             Pool.Instance.SceneControl.SaveDialogOpen = false;
             gameObject.SetActive(false);
+        }
+
+        public void OnAdSaveButtonClick()
+        {
+            if (Advertisement.IsReady("rewardedVideo") && !Advertisement.isShowing)
+            {
+                Advertisement.Show("rewardedVideo", new ShowOptions { resultCallback = HandleClosingOfAd });
+            }
+        }
+
+        private void HandleClosingOfAd(ShowResult result)
+        {
+            Debug.Log(result.ToString());
+            if (result == ShowResult.Finished)
+            {
+                PlayerController.DieOnMiss = false;
+                OnOfferPass();
+            }
         }
     }
 }

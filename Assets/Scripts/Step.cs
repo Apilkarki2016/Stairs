@@ -8,7 +8,7 @@ namespace Stairs
 {
     public class Step : MonoBehaviour, ITouchControllable
     {
-        [SerializeField] private float DeactivationDelay = 10.1f;
+        [SerializeField, Range(1, 99)] private int PointsPerSwipe = 10;
         [SerializeField, Range(1f, 30f)] private float OffsetDistance = 3f;
         [SerializeField, Range(0.1f, 5f)] private float SnapTolerance = 2f;
 
@@ -122,6 +122,8 @@ namespace Stairs
             {
                 Interactable = false;
                 transform.position = _snapPosition;
+
+                Pool.Instance.SceneControl.IncreasePlayerScore(10);
             }
         }
     }

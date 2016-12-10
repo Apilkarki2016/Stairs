@@ -17,13 +17,13 @@ namespace Stairs.Utils
 
         private void Update()
         {
-            ScoreText.text = string.Format(ScoreTextPattern, DataStorage.Instance.StepsCurrent);
+            ScoreText.text = string.Format(ScoreTextPattern, DataStorage.Instance.CurrentScore);
             CoinText.text = string.Format(CoinPattern, DataStorage.Instance.Coins);
         }
 
-        public void IncreasePlayerScore()
+        public void IncreasePlayerScore(int howMany)
         {
-            DataStorage.Instance.AddToSteps(1);
+            DataStorage.Instance.AddToScore(howMany);
         }
 
         public void ReloadScene()

@@ -10,7 +10,7 @@ namespace Stairs.Utils
     {
         public int Coins { get { return PersistentData.PermanentCoins; } }
         public int Gems { get { return PersistentData.PermanentGems; } }
-        public int StepsCurrent;
+        public int CurrentScore;
         public int HighScore { get { return PersistentData.HighScore; } }
 
         private string SaveFile { get { return Path.Combine(Application.persistentDataPath, _saveFile); } }
@@ -50,19 +50,19 @@ namespace Stairs.Utils
 
         public void EndOfPlayLoop()
         {
-            PersistentData.HighScore = StepsCurrent;
+            PersistentData.HighScore = CurrentScore;
             WriteSave();
         }
 
         public void InitializeForPlayloop()
         {
-            StepsCurrent = 0;
+            CurrentScore = 0;
         }
 
-        public int AddToSteps(int howMuch = 1)
+        public int AddToScore(int howMuch = 1)
         {
-            if (howMuch > 0) StepsCurrent += howMuch;
-            return StepsCurrent;;
+            if (howMuch > 0) CurrentScore += howMuch;
+            return CurrentScore;;
         }
 
         public int AddToCoins(int howMuch = 1)
