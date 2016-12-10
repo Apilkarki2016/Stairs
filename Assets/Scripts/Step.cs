@@ -20,6 +20,8 @@ namespace Stairs
         private Renderer _renderer;
         private Vector3 _snapPosition;
 
+        private AudioSource _audio;
+
         public bool Interactable
         {
             get { return _interactable; }
@@ -45,6 +47,7 @@ namespace Stairs
 
         private void InitializeStep()
         {
+            _audio = GetComponent<AudioSource>();
             Pool.Instance.GoToStepDictionary.Add(gameObject, this);
             _go = _go ?? gameObject;
             _rb = _rb ?? GetComponent<Rigidbody>();
@@ -128,11 +131,18 @@ namespace Stairs
             var dist = Vector3.Magnitude(transform.position - _snapPosition);
             if (dist < SnapTolerance)
             {
+                PlaySlideInSound();
                 Interactable = false;
                 transform.position = _snapPosition;
-
                 Pool.Instance.SceneControl.IncreasePlayerScore(10);
             }
+        }
+
+        private void PlaySlideInSound()
+        {
+            var dir = transform.position.x - _snapPosition.x;
+            _audio.panStereo = dir <= 0 ? 0.75f : -0.75f; 
+            _audio.PlayOneShot(_audio.clip);
         }
     }
 }
