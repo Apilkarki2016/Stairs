@@ -16,6 +16,7 @@ namespace Stairs.Utils
         [SerializeField] private string CoinPattern = "Coins {0}";
 
         private AudioSource _coinAudio;
+        private AudioSource _musicAudio;
 
         private void Update()
         {
@@ -25,7 +26,9 @@ namespace Stairs.Utils
 
         private void Awake()
         {
-            _coinAudio = GetComponents<AudioSource>()[1];
+            var sources = GetComponents<AudioSource>();
+            _musicAudio = sources[0];
+            _coinAudio = sources[1];
         }
 
         public void IncreasePlayerScore(int howMany)
@@ -46,6 +49,18 @@ namespace Stairs.Utils
         {
             _coinAudio.PlayOneShot(_coinAudio.clip);
             DataStorage.Instance.AddToCoins(1);
+        }
+
+        public void MusicSetPause(bool pauseStatus)
+        {
+            if (pauseStatus)
+            {
+                _musicAudio.Pause();
+            }
+            else
+            {
+                _musicAudio.Play();
+            }
         }
     }
 }

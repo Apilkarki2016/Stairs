@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#if UNITY_ANDROID
-using UnityEngine.Advertisements;
-#elif UNITY_IOS
+#if UNITY_ANDROID || UNITY_IOS
 using UnityEngine.Advertisements;
 #endif
 

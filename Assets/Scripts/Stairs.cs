@@ -47,13 +47,6 @@ namespace Stairs
             var go = Pool.Instance.GetObject(StairPrefab);
             go.transform.position = _nextStep;
             go.transform.rotation = Quaternion.identity;
-
-            if (Random.Range(0f, 1f) < PickupRarity)
-            {
-                var pu = Pool.Instance.GetObject(CoinPrefab);
-                (Pool.Instance.GoToPickupDictionary[pu]).PositionInScene(go.transform.position);
-            }
-
             _stairs.Enqueue(go);
 
             _nextStep += new Vector3(0, _stepSize.y, _stepSize.z);
@@ -68,6 +61,13 @@ namespace Stairs
 
                 if (step == null) continue;
                 _player.AddStep(go.transform.position, step);
+
+                if (SafeStepsAtStart < _stepsPlaced && Random.Range(0f, 1f) < PickupRarity)
+                {
+                    var pu = Pool.Instance.GetObject(CoinPrefab);
+                    (Pool.Instance.GoToPickupDictionary[pu]).PositionInScene(go.transform.position);
+                }
+
                 if (step.ActivateInScene(SafeStepsAtStart >= ++_stepsPlaced, StepOffsetChange*EnsureConstantAction()))
                 {
                     _consecutiveSafeSteps = 0;

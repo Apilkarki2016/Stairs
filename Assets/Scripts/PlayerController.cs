@@ -13,6 +13,7 @@ namespace Stairs
         [SerializeField] private UnityEvent PlayerStartsRunningEvent;
         [SerializeField] private UnityEvent PlayerTakesStep;
         [SerializeField] private UnityEvent PlayerNeedsSave;
+        [SerializeField] private UnityEvent PlayerIsSaved;
         [SerializeField] private GameObject TouchControlBackdrop;
 
         public const string StepTag = "Step";
@@ -105,6 +106,7 @@ namespace Stairs
                     else
                     {
                         wayPoint.step.AutoSnap();
+                        PlayerIsSaved.Invoke();
                     }
                 }
 
