@@ -6,16 +6,45 @@ using UnityEngine.Events;
 
 namespace Stairs
 {
+    /// <summary>
+    /// Player game object.
+    /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour
     {
+        /// <summary>
+        /// Fires on player death.
+        /// </summary>
         [SerializeField] private UnityEvent PlayerDeathEvent;
+
+        /// <summary>
+        /// Fires when player starts running.
+        /// </summary>
         [SerializeField] private UnityEvent PlayerStartsRunningEvent;
+
+        /// <summary>
+        /// Fires each time player steps on a step.
+        /// </summary>
         [SerializeField] private UnityEvent PlayerTakesStep;
+
+        /// <summary>
+        /// Fires when player is about to die.
+        /// </summary>
         [SerializeField] private UnityEvent PlayerNeedsSave;
+
+        /// <summary>
+        /// Fires if player is saved by spending coins or watching ad.
+        /// </summary>
         [SerializeField] private UnityEvent PlayerIsSaved;
+
+        /// <summary>
+        /// Reference to backdrop that catches touches.
+        /// </summary>
         [SerializeField] private GameObject TouchControlBackdrop;
 
+        /// <summary>
+        /// Tag to be expected from steps.
+        /// </summary>
         public const string StepTag = "Step";
 
         /// <summary>
@@ -33,8 +62,14 @@ namespace Stairs
         /// </remarks>
         public bool IsRunning { private set; get; }
 
+        /// <summary>
+        /// Enumeration of waypoint types.
+        /// </summary>
         private enum WaypointType { Step = 0, Walk = 1 }
 
+        /// <summary>
+        /// Waypoints that guide the character.
+        /// </summary>
         private struct Waypoint
         {
             public Vector3 position;
@@ -49,8 +84,19 @@ namespace Stairs
             }
         }
 
+        /// <summary>
+        /// Velocity of the player.
+        /// </summary>
         [SerializeField, Range(0.1f, 100.0f)] private float StepsPerSecond = 1.50f;
+
+        /// <summary>
+        /// Pace of acceleration.
+        /// </summary>
         [SerializeField, Range(1, 100)] private int AccelerateAfterHowManySteps = 8;
+
+        /// <summary>
+        /// Amounth of acceleration.
+        /// </summary>
         [SerializeField, Range(0f, 500f)] private float Acceleration = 120f;
 
         private readonly Queue<Waypoint> _playerPath = new Queue<Waypoint>();
@@ -59,19 +105,36 @@ namespace Stairs
         private int _stepsTaken = 0;
         private AudioSource _stepSource;
 
+        /// <summary>
+        /// If the player should perish on missed step.
+        /// </summary>
         public static bool DieOnMiss = true;
 
+        /// <summary>
+        /// Initialization at start.
+        /// </summary>
         private void Awake()
         {
             _rigidBody = GetComponent<Rigidbody>();
             _stepSource = GetComponent<AudioSource>();
         }
 
+        /// <summary>
+        /// Adds a waypoint
+        /// </summary>
+        /// <param name="destination">Where should the character walk.</param>
+        /// <param name="step">If this waypoint is a step, reference to it.</param>
         public void AddStep(Vector3 destination, Step step = null)
         {
             _playerPath.Enqueue(new Waypoint(destination, step));
         }
 
+        /// <summary>
+        /// Walk to next waypoint.
+        /// </summary>
+        /// <param name="wayPoint">Where to.</param>
+        /// <param name="duration">How long should it take.</param>
+        /// <returns>Not used.</returns>
         private IEnumerator WalkToWaypoint(Waypoint wayPoint, float duration)
         {
             var start = transform.position;
@@ -116,6 +179,9 @@ namespace Stairs
             LookForNextStep();
         }
 
+        /// <summary>
+        /// Handles player missing a step and not getting saved.
+        /// </summary>
         private void OnMissedStep()
         {
             // We must release the backdrop, as it's non-convex mesh and thus can't be
@@ -128,6 +194,9 @@ namespace Stairs
             PlayerDeathEvent.Invoke();
         }
 
+        /// <summary>
+        /// Find next waypoint and start walking towards it.
+        /// </summary>
         private void LookForNextStep()
         {
             while (_playerTrail.Count > Pool.Instance.StairController.PlayerTrailLenght)
@@ -139,6 +208,9 @@ namespace Stairs
             if (_playerPath.Count > 0) StartCoroutine(WalkToWaypoint(_playerPath.Dequeue(), 1/StepsPerSecond));
         }
 
+        /// <summary>
+        /// Starts the player movement.
+        /// </summary>
         public void StartRunning()
         {
             if (IsRunning) return;

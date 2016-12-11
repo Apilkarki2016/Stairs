@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Stairs
 {
+    /// <summary>
+    /// Interface for objects controllable with finger.
+    /// </summary>
     public interface ITouchControllable
     {
         void OnTouchCancel(Touch touch);
