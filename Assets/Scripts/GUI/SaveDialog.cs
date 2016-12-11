@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using Stairs.Utils;
 using UnityEngine;
+#if UNITY_ANDROID || UNITY_IOS
 using UnityEngine.Advertisements;
+#endif
 using UnityEngine.UI;
 
 namespace Stairs.GUI
@@ -36,12 +38,14 @@ namespace Stairs.GUI
 
         public void OnAdSaveButtonClick()
         {
+#if UNITY_ANDROID || UNITY_IOS
             if (Advertisement.IsReady("rewardedVideo") && !Advertisement.isShowing)
             {
                 Advertisement.Show("rewardedVideo", new ShowOptions { resultCallback = HandleClosingOfAd });
             }
+#endif
         }
-
+#if UNITY_ANDROID || UNITY_IOS
         private void HandleClosingOfAd(ShowResult result)
         {
             Debug.Log(result.ToString());
@@ -51,5 +55,6 @@ namespace Stairs.GUI
                 OnOfferPass();
             }
         }
+#endif
     }
 }

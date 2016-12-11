@@ -1,7 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_ANDROID
 using UnityEngine.Advertisements;
+#elif UNITY_IOS
+using UnityEngine.Advertisements;
+#endif
+
 
 namespace Stairs.Ads
 {
@@ -19,7 +24,7 @@ namespace Stairs.Ads
             if (Advertisement.isInitialized) return;
             Advertisement.Initialize(AndroidId, true);
 #else
-            Debug.Log("Ads not supported on this platform!")
+            Debug.Log("Ads not supported on this platform!");
 #endif
         } 
     }
