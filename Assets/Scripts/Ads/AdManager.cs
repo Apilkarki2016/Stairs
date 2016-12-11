@@ -5,14 +5,26 @@ using UnityEngine;
 using UnityEngine.Advertisements;
 #endif
 
-
 namespace Stairs.Ads
 {
+    /// <summary>
+    /// Handles Unity Ads integration.
+    /// </summary>
     public class AdManager : MonoBehaviour
     {
+        /// <summary>
+        /// Unity project ID for Android platform.
+        /// </summary>
         public static string AndroidId = "1228423";
+
+        /// <summary>
+        /// Unity project ID for iOS.
+        /// </summary>
         public static string IosId = "1228424";
 
+        /// <summary>
+        /// Initializes the Ads API integration, if not initialized.
+        /// </summary>
         private void Awake()
         {
 #if UNITY_ANDROID
