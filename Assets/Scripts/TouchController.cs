@@ -5,11 +5,17 @@ using UnityEngine;
 
 namespace Stairs
 {
+    /// <summary>
+    /// Controls touch input on 3d objects.
+    /// </summary>
     public class TouchController : MonoBehaviour
     {
         private Dictionary<int, ITouchControllable> fingerIdToObject = new Dictionary<int, ITouchControllable>();
 
-        void Update()
+        /// <summary>
+        /// Iterates active touches on the scene and passes their references onwards.
+        /// </summary>
+        private void Update()
         {
             for (var i = 0; i < Input.touchCount; i++)
             {
@@ -17,6 +23,10 @@ namespace Stairs
             }
         }
 
+        /// <summary>
+        /// Handles a touch event.
+        /// </summary>
+        /// <param name="touchIndex">Index of touch to handle.</param>
         private void TouchToGameObject(int touchIndex)
         {
             var ray = Camera.main.ScreenPointToRay(Input.GetTouch(touchIndex).position);
