@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -97,6 +98,17 @@ namespace Stairs.Utils
         {
             _coinAudio.PlayOneShot(_coinAudio.clip);
             DataStorage.Instance.AddToCoins(1);
+        }
+
+        /// <summary>
+        /// Adds given number of bought coins to player and then immediately saes the game.
+        /// </summary>
+        /// <param name="howMany">How many coins to grant.</param>
+        public void BuyCoins(int howMany)
+        {
+            if (howMany <= 0) throw new Exception(string.Format("Coin buy is <= 0 ({0})", howMany));
+            DataStorage.Instance.AddToCoins(howMany);
+            DataStorage.Instance.WriteSave();
         }
 
         /// <summary>
